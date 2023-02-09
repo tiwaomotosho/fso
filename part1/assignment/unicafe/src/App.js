@@ -5,14 +5,20 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 const Statistics = ({ stats }) => {
-  return (<div>
-    <div>good {stats["good"]}</div>
-    <div>neutral {stats["neutral"]}</div>
-    <div>bad {stats["bad"]}</div>
-    <div>all {stats["total"]}</div>
-    <div>average {stats["avg"]}</div>
-    <div>positive {stats["pos"]} %</div>
-  </div>);
+  if (stats["total"] === 0) {
+    return <div>No feedback given</div>;
+  } else {
+    return (
+      <div>
+        <div>good {stats["good"]}</div>
+        <div>neutral {stats["neutral"]}</div>
+        <div>bad {stats["bad"]}</div>
+        <div>all {stats["total"]}</div>
+        <div>average {stats["avg"]}</div>
+        <div>positive {stats["pos"]} %</div>
+      </div>
+    );
+  }
 };
 
 const App = () => {
