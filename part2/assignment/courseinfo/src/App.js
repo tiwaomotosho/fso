@@ -52,7 +52,11 @@ const App = () => {
   return (
     <div>
       <Course courseAll={courseAll} />
+<<<<<<< HEAD
       {/* I already did what was expected for 2.3 */}
+=======
+      {/* I already did what was expected for 2.4 */}
+>>>>>>> 2c262ba2cca6b56385364bd7f6796f5444ba113b
       <Total
         sum={courseAll.parts.reduce((sum, part) => sum + part.exercises, 0)}
       />
