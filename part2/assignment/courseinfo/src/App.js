@@ -1,6 +1,10 @@
-const Header = ({ course }) => <h1>{course}</h1>;
+const Header = ({ course }) => <h2>{course}</h2>;
 
-const Total = ({ sum }) => <p>total of {sum} exercises</p>;
+const Total = ({ sum }) => (
+  <p>
+    <b>total of {sum} exercises</b>
+  </p>
+);
 
 const Part = ({ part }) => (
   <p>
@@ -18,48 +22,72 @@ const Content = ({ parts }) => (
 
 const Course = ({ courseAll }) => (
   <>
-    <Header course={courseAll.course} />
+    <Header course={courseAll.name} />
     <Content parts={courseAll.parts} />
+    <Total
+      sum={courseAll.parts.reduce((sum, part) => sum + part.exercises, 0)}
+    />
+  </>
+);
+
+const CourseList = ({ courses }) => (
+  <>
+    {courses.map((course, id) => (
+      <Course key={id} courseAll={course} />
+    ))}
   </>
 );
 
 const App = () => {
-  const course = "Half Stack application development";
-  const parts = [
+  const courses = [
     {
-      name: "Fundamentals of React",
-      exercises: 10,
+      name: "Half Stack application development",
+      id: 1,
+      parts: [
+        {
+          name: "Fundamentals of React",
+          exercises: 10,
+          id: 1,
+        },
+        {
+          name: "Using props to pass data",
+          exercises: 7,
+          id: 2,
+        },
+        {
+          name: "State of a component",
+          exercises: 14,
+          id: 3,
+        },
+        {
+          name: "Redux",
+          exercises: 11,
+          id: 4,
+        },
+      ],
     },
     {
-      name: "Using props to pass data",
-      exercises: 7,
-    },
-    {
-      name: "State of a component",
-      exercises: 14,
-    },
-    {
-      name: "State of a component extra",
-      exercises: 18,
+      name: "Node.js",
+      id: 2,
+      parts: [
+        {
+          name: "Routing",
+          exercises: 3,
+          id: 1,
+        },
+        {
+          name: "Middlewares",
+          exercises: 7,
+          id: 2,
+        },
+      ],
     },
   ];
 
-  const courseAll = {
-    course: course,
-    parts: parts,
-  };
-
   return (
     <div>
-      <Course courseAll={courseAll} />
-<<<<<<< HEAD
-      {/* I already did what was expected for 2.3 */}
-=======
-      {/* I already did what was expected for 2.4 */}
->>>>>>> 2c262ba2cca6b56385364bd7f6796f5444ba113b
-      <Total
-        sum={courseAll.parts.reduce((sum, part) => sum + part.exercises, 0)}
-      />
+      <h1>Web Development curriculum</h1>
+      <CourseList courses={courses} />
     </div>
   );
 };
