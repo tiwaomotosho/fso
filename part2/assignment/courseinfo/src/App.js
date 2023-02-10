@@ -52,6 +52,7 @@ const App = () => {
   return (
     <div>
       <Course courseAll={courseAll} />
+      {/* I already did what was expected for 2.4 */}
       <Total
         sum={courseAll.parts.reduce((sum, part) => sum + part.exercises, 0)}
       />
