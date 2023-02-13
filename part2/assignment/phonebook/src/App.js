@@ -3,20 +3,23 @@ import { useState } from "react";
 const Person = ({ person }) => {
   return (
     <>
-      {person.name}
+      <b>Name</b>:{person.name}; <b>Phone</b>:{person.phone}
       <br />
     </>
   );
 };
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
-  const [newName, setNewName] = useState("");
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", phone: "040 - 1234567" },
+  ]);
+  const [newName, setNewName] = useState({ name: "", phone: "" });
 
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
-      name: newName,
+      name: newName.name,
+      phone: newName.phone,
     };
 
     if (persons.some((person) => person.name === personObject.name)) {
@@ -27,13 +30,20 @@ const App = () => {
         !persons.every((person) => person.name === personObject.name)
       );
       setPersons(persons.concat(personObject));
-      setNewName("");
+      setNewName({ name: "", phone: "" });
     }
   };
 
-  const handlePersonChange = (event) => {
-    console.log(event.target.value);
-    setNewName(event.target.value);
+  const handleNameChange = (event) => {
+    console.log("name is", event.target.value);
+    // setNewName(event.target.value);
+    setNewName({ ...newName, name: event.target.value });
+  };
+
+  const handlePhoneChange = (event) => {
+    console.log("phone is", event.target.value);
+    // setNewName(event.target.value);
+    setNewName({ ...newName, phone: event.target.value });
   };
 
   return (
@@ -41,7 +51,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handlePersonChange} />
+          name: <input value={newName.name} onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newName.phone} onChange={handlePhoneChange} />
         </div>
         <div>
           <button type="submit">add</button>
