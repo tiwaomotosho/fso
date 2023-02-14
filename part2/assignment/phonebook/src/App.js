@@ -9,13 +9,38 @@ const Person = ({ person }) => {
   );
 };
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ]);
+const Filter = ({ pattern, onChange }) => {
+  return (
+    <div>
+      filter shown with <input value={pattern} onChange={onChange} />
+    </div>
+  );
+};
+
+const PersonForm = ({ onSubmit, newName, onNameChange, onNumberChange }) => (
+  <form onSubmit={onSubmit}>
+    <div>
+      name: <input value={newName.name} onChange={onNameChange} />
+    </div>
+    <div>
+      number: <input value={newName.number} onChange={onNumberChange} />
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+);
+
+const Persons = ({ persons }) => (
+  <div>
+    {persons.map((person, id) => (
+      <Person key={id} person={person} />
+    ))}
+  </div>
+);
+
+const App = ({ phones }) => {
+  const [persons, setPersons] = useState(phones);
   const [newName, setNewName] = useState({ name: "", number: "" });
   const [newPattern, setNewPattern] = useState("");
 
@@ -42,49 +67,34 @@ const App = () => {
   const personsFiltered = persons.filter((person) => regex.test(person.name));
   // console.log(personsFiltered);
 
-  const handleNameChange = (event) => {
-    console.log("name is", event.target.value);
-    // setNewName(event.target.value);
-    setNewName({ ...newName, name: event.target.value });
-  };
+  // Refactoring the Event Handlers professionally
+  const handleEvent =
+    (title, callback, isObj = true) =>
+    (event) => {
+      console.log(`${title} is`, event.target.value);
+      if (isObj) callback({ ...newName, [title]: event.target.value });
+      else callback(event.target.value);
+    };
 
-  const handlePhoneChange = (event) => {
-    console.log("phone is", event.target.value);
-    // setNewName(event.target.value);
-    setNewName({ ...newName, number: event.target.value });
-  };
-
-  const handlePatternChange = (event) => {
-    console.log("pattern is", event.target.value);
-    // setNewName(event.target.value);
-    setNewPattern(event.target.value);
-  };
+  const handleNameChange = handleEvent("name", setNewName);
+  const handlePhoneChange = handleEvent("number", setNewName);
+  const handlePatternChange = handleEvent("pattern", setNewPattern, false);
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with{" "}
-        <input value={newPattern} onChange={handlePatternChange} />
-      </div>
+      <Filter pattern={newPattern} onChange={handlePatternChange} />
+
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName.name} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newName.number} onChange={handlePhoneChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        onSubmit={addPerson}
+        newName={newName}
+        onNameChange={handleNameChange}
+        onNumberChange={handlePhoneChange}
+      />
+
       <h2>Numbers</h2>
-      <div>
-        {personsFiltered.map((person, id) => (
-          <Person key={id} person={person} />
-        ))}
-      </div>
+      <Persons persons={personsFiltered} />
     </div>
   );
 };
