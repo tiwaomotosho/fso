@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Person = ({ person }) => {
   return (
@@ -39,10 +40,19 @@ const Persons = ({ persons }) => (
   </div>
 );
 
-const App = ({ phones }) => {
-  const [persons, setPersons] = useState(phones);
+const App = () => {
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState({ name: "", number: "" });
   const [newPattern, setNewPattern] = useState("");
+
+  useEffect(() => {
+    console.log("effect");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    });
+  }, []);
+  console.log("render", persons.length, "persons");
 
   const addPerson = (event) => {
     event.preventDefault();
