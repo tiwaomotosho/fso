@@ -25,10 +25,42 @@ const PersonForm = ({ onSubmit, newName, onNameChange, onNumberChange }) => (
   </form>
 );
 
+const Notification = ({ style, message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div style={style}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState({ name: "", number: "" });
   const [newPattern, setNewPattern] = useState("");
+  const [errorMessage, setErrorMessage] = useState({
+    message: null,
+    error: true,
+  });
+
+  const alert = errorMessage.error
+    ? {
+        color: "red",
+        background: "lightgrey",
+        fontSize: 20,
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+      }
+    : {
+        color: "green",
+        background: "lightgrey",
+        fontSize: 20,
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+      };
 
   useEffect(() => {
     console.log("effect");
@@ -63,16 +95,54 @@ const App = () => {
               number: personObject.number,
             })
             .then((returnedNote) => {
+              setErrorMessage({
+                message: `Information of ${personFind.name} has been successfully updated`,
+                error: false,
+              });
+              setTimeout(() => {
+                setErrorMessage({
+                  message: null,
+                  error: true,
+                });
+              }, 5000);
               setPersons(
                 persons.map((person) =>
                   person.id !== personFind.id ? person : returnedNote
                 )
+              );
+            })
+            .catch((error) => {
+              setErrorMessage({
+                message: `Information of ${personFind.name} has already been removed from server`,
+                error: true,
+              });
+              setTimeout(() => {
+                setErrorMessage({
+                  message: null,
+                  error: true,
+                });
+              }, 5000);
+              setPersons(
+                persons.filter((person) => person.id !== personFind.id)
+              );
+              console.log(
+                `Error updating note with id ${personFind.id}: ${error}`
               );
             });
         }
       } else window.alert(`${personObject.name} is already added to phonebook`);
     } else {
       personService.create(personObject).then((response) => {
+        setErrorMessage({
+          message: `Added ${personObject.name}`,
+          error: false,
+        });
+        setTimeout(() => {
+          setErrorMessage({
+            message: null,
+            error: true,
+          });
+        }, 5000);
         setPersons(persons.concat(response));
         setNewName({ name: "", number: "" });
       });
@@ -106,6 +176,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification style={alert} message={errorMessage.message} />
       <Filter pattern={newPattern} onChange={handlePatternChange} />
 
       <h2>add a new</h2>
