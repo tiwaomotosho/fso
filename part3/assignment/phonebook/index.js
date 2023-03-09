@@ -1,6 +1,22 @@
 const express = require("express");
+const morgan = require("morgan");
+
 const app = express();
 
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+      JSON.stringify(req.body),
+    ].join(" ");
+  })
+);
 app.use(express.json());
 
 let persons = [
@@ -46,18 +62,24 @@ app.get("/api/persons/:id", (request, response) => {
   } else {
     response.status(404).end();
   }
-
-  response.json(person);
 });
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
+  const personFind = persons.find((person) => person.name === body.name);
+  console.log(personFind);
 
-  // if (!body.content) {
-  //   return response.status(400).json({
-  //     error: "content missing",
-  //   });
-  // }
+  if (personFind) {
+    return response.status(400).json({
+      error: "name is already existing",
+    });
+  }
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "name or number is missing",
+    });
+  }
 
   const person = {
     name: body.name,
