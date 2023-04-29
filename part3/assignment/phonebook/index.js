@@ -42,6 +42,12 @@ let persons = [
   },
 ];
 
+app.get("/", (request, response) => {
+  response.send(`
+    <p>You are at the root</p>
+    `);
+});
+
 app.get("/info", (request, response) => {
   response.send(`
     <p>Phonebook has info for ${persons.length} people</p>
